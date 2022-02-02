@@ -6,6 +6,6 @@ from end import *
 from game import *
 
 window = initVideo()
-choosePlace(window,3)
+choosePlace(window,3,1,True)
 #menu(window)
 #end(window)
