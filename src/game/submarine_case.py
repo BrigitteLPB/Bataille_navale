@@ -15,8 +15,6 @@ class SubmarineCase(SeaCase):
     def hit(self):
         if(self.state == SeaCaseState.HIDDEN):
             self.state = SeaCaseState.TOUCHED
-            if self.submarine:
-                self.submarine.hit()
         else:
             raise CannotHitCase(self)
         
@@ -26,4 +24,3 @@ class SubmarineCase(SeaCase):
 
 if __name__ == "__main__":
     print(SubmarineCase(None, 1, 1)) # expected : Submarine:None,x:1,y:1,layer:None
-

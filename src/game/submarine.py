@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from sea_case import SeaCaseState
 if TYPE_CHECKING:   
     from sea import Sea
 
@@ -14,18 +13,12 @@ class SubmarineOrientation(str, Enum):
     WEST	=	'west'
 
 class Submarine():
-    """this class reprensent a submarine in the game
 
-    Args:
-        Event ([type]): [description]
-    """
     def __init__(self, sea: Sea, size: int):
-        super().__init__()
         self.sea = sea
         self.size: int = size
         self.submarine_case = [SubmarineCase(self, 0, 0) for _ in range(size)]
         self.orientation = SubmarineOrientation.NORTH
-        self.destroy = False
 
     def update_pos(self, pos_x: int, pos_y: int, orientation: SubmarineOrientation):
         """set compute the position of all cases on layer
@@ -52,19 +45,7 @@ class Submarine():
                 x+=1
             if orientation == SubmarineOrientation.EAST:
                 x-=1
-
-
-    def hit(self):
-        """check if the submarine is destroyed
-        """        
-        isDestroy = True
-
-        for c in self.submarine_case:
-            if c.state != SeaCaseState.TOUCHED:
-                isDestroy = False
-
-        self.destroy = isDestroy
-
+        
 
     def __str__(self):
         return f"[Submarine]\u007Bsea:{self.sea},size:{self.size},orientation:{self.orientation},submarine_case:[{self.submarine_case}]\u007D"
@@ -72,12 +53,3 @@ class Submarine():
 
 if __name__ == "__main__":
     print(Submarine(None, 3))
-
-    s = Submarine(None, 1)
-
-    s.submarine_case[0].hit()
-
-    if s.destroy:
-        print(f"the submarine is destroyed")
-    else:
-        print(f"error during hitting")

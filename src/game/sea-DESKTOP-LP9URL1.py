@@ -1,6 +1,5 @@
 # this file describe a Class with all the layers
 from enum import Enum
-from typing import Tuple
 from sea_case import SeaCaseState
 from submarine import SubmarineOrientation
 from submarine_case import SubmarineCase
@@ -45,18 +44,14 @@ class Sea(Event):
         # checking out of bounds
         if x >= 0 and x < self.width and y >= 0 and y < self.heigth:
             # checking out of bounds before assinement
-            if(orientation == SubmarineOrientation.NORTH and y - (submarine.size - 1) >= 0) or (orientation == SubmarineOrientation.SOUTH and y + (submarine.size - 1) < self.heigth) or (orientation == SubmarineOrientation.EAST and x - (submarine.size - 1) >= 0) or (orientation == SubmarineOrientation.WEST and x + (submarine.size - 1) < self.width):
-                submarine.update_pos(x, y, orientation)
-                
+            if(orientation == SubmarineOrientation.NORTH and y - submarine.size >= 0) or (orientation == SubmarineOrientation.SOUTH and y + submarine.size < self.heigth) or (orientation == SubmarineOrientation.EAST and x - submarine.size >= 0) or (orientation == SubmarineOrientation.WEST and x + submarine.size < self.width):
                 cases_layer = s.sea_cases[s.layer_depth.index(layer)]
                 
+                submarine.update_pos(x, y, orientation)
+                
                 # place the submarine on the sea
-                cases = []
-                for sub_case in submarine.submarine_case:
-                    cases.append(cases_layer[sub_case.y][sub_case.x])
-                
-                # cases = list(filter(lambda args : args[0] in args[1], [cases_layer, [(s.x, s.y) for s in submarine.submarine_case]]))               
-                
+                cases = filter(lambda sea_case, pos : (sea_case.x, sea_case.y) in pos, cases_layer, [(s.x, s.y) for s in submarine.submarine_case])
+               
                 isFree = True
                 for c in cases :
                     if isinstance(c, SubmarineCase):
@@ -64,7 +59,7 @@ class Sea(Event):
 
                 if isFree:
                     for new_c in submarine.submarine_case:
-                        cases_layer[new_c.y][new_c.x] = new_c
+                        self.sea_cases[new_c.y][new_c.x] = new_c
                     opperation_success = True
         
         try:
@@ -115,20 +110,5 @@ if __name__ == "__main__":
 
     if s.place_submarine(s.submarines[0], SubmarineOrientation.NORTH, s.layer_depth[0], 0, 0) :
         print("the submarine is correctly place")
-    else:
-        print("error during placing")
-
-    if not s.place_submarine(s.submarines[3], SubmarineOrientation.SOUTH, s.layer_depth[1], 9, 8) :
-        print("the submarine can't be placed")
-    else:
-        print("error during placing")
-        
-    if s.place_submarine(s.submarines[3], SubmarineOrientation.SOUTH, s.layer_depth[1], 9, 7) :
-        print("the submarine is correctly place")
-    else:
-        print("error during placing")
-
-    if not s.place_submarine(s.submarines[4], SubmarineOrientation.WEST, s.layer_depth[1], 7, 8) :
-        print("the submarine over another submarine")
     else:
         print("error during placing")
