@@ -1,6 +1,3 @@
-
-
-
 from math import sqrt
 from event import Event
 from enum import Enum
@@ -31,11 +28,11 @@ class Sea(Event):
         self.submarines = {}
         for i in range(len(submarines)):
             self.submarines[i + 1] = (submarines[i], False) # {sub_id: (sub_lenght, sinked)}
-        # self.submarines = submarines
 
         self.board = {} 
         for layer in layer_depth:
             self.board[layer] = [[(SeaCaseId.WATER, False) for _ in range(width)] for _ in range(height)]
+
 
     def hit(self, layer_depth: int, x: int, y: int) -> bool:
         if x >= 0 and x < self.width and y >= 0 and y < self.height:
@@ -62,6 +59,7 @@ class Sea(Event):
     
         return False
 
+
     def getSubmarineCases(self, submarine_id):
         cases = []
 
@@ -72,6 +70,7 @@ class Sea(Event):
                         cases.append((layer, x, y))
         
         return cases
+
 
     def isAlign(self, pos: list[tuple[int, int]]):
         vecteurs = []
