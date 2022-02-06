@@ -30,9 +30,6 @@ class Game():
 
         self.actualTurn = JoueurId.JOUEUR_1
 
-    def makeTurn(self):
-        pass
-
     def checkWin(self, sea: Sea):
         for j in range(len(self.joueurs)):
             if self.joueurs[j] == sea:
@@ -92,6 +89,7 @@ class Game():
             layer, x, y = (0, 0, 0) # layer, x, y = getHitPosition()
             if self.joueurs[self.actualTurn].hit(self.joueurs[self.actualTurn].layers[layer], x, y):
                 self.actualTurn = (self.actualTurn + 1) % len(self.joueurs)
+
 
 if __name__ == "__main__":
     TEST_WIN = False
