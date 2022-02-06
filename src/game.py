@@ -21,8 +21,11 @@ class Game():
             self.windows = initVideo()
 
             for s in self.joueurs:
-                # s.on("update")
+                s.on("update", lambda _ : LogUtil.INFO("update event"))
+                s.on("hit", lambda _ : LogUtil.INFO("hit event"))
                 s.on("end", self.checkWin)
+                s.on("miss", lambda _ : LogUtil.INFO("miss event"))
+                s.on("sink", lambda _ : LogUtil.INFO("sink event"))
                 pass
 
         self.actualTurn = JoueurId.JOUEUR_1
@@ -83,6 +86,12 @@ class Game():
                     first = False
         LogUtil.INFO("submarines for both players placed")
 
+
+        # jeu
+        while not self.endapp:
+            layer, x, y = (0, 0, 0) # layer, x, y = getHitPosition()
+            if self.joueurs[self.actualTurn].hit(self.joueurs[self.actualTurn].layers[layer], x, y):
+                self.actualTurn = (self.actualTurn + 1) % len(self.joueurs)
 
 if __name__ == "__main__":
     TEST_WIN = False
