@@ -7,7 +7,13 @@ from env import EnvUtilServer
 from sdl_init import initVideo
 
 
-def end(window: pygame.Surface):
+def end(window: pygame.Surface, winner_id: int):
+    """affiche le gagnant
+
+    Args:
+        window (pygame.Surface): pygame object
+        winner (int): joueur : 1 = J1, 2 = J2
+    """    
     refresh = True
     # color_num = 0
     # color_inc = True
@@ -17,7 +23,6 @@ def end(window: pygame.Surface):
 
 
     while(refresh):
-        winner = 1
         ft = font.Font(f"{EnvUtilServer.env['ASSETS_FOLDER']}/Font/menu.ttf", 60)
         # if(color_inc == True):
         #     color_num = color_num + 1
@@ -38,7 +43,7 @@ def end(window: pygame.Surface):
         colors_inc += 1
 
         end = ft.render('Fin du jeu', True, colors)
-        winner = ft.render('Le joueur '+str(winner)+' est victorieux', True, colors)
+        winner = ft.render('Le joueur '+str(winner_id)+' est victorieux', True, colors)
     
         _ = window.blit(end, [(display.get_surface().get_width()/2)-end.get_width()/2,325])
         _ = window.blit(winner, [(display.get_surface().get_width()/2)-winner.get_width()/2,400])

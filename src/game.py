@@ -1,7 +1,8 @@
 from enum import Enum
 from constants import SDL, SEA
+from log import LogUtil
 from sdl_end import end
-from sea import Sea
+from sea import Sea, SeaCaseId
 from sdl_init import initVideo
 
 class JoueurId(int, Enum):
@@ -18,6 +19,7 @@ class Game():
 
             for s in self.joueurs:
                 # s.on("update")
+                s.on("end", self.checkWin)
                 pass
 
         self.actualTurn = JoueurId.JOUEUR_1
@@ -25,10 +27,25 @@ class Game():
     def makeTurn(self):
         pass
 
+    def checkWin(self, sea: Sea):
+        for j in range(len(self.joueurs)):
+            if self.joueurs[j] == sea:
+                end(self.windows, j+1)
+                return  # endpoint here
+
     def run(self):
         if SDL:
-            end(self.windows)
+            pass
 
 if __name__ == "__main__":
-    g = Game()
-    g.run()
+    TEST_WIN = True
+    
+    if TEST_WIN:
+        g = Game()
+        if g.joueurs[0].placeSubmarine(SeaCaseId.SUBMARINE_1, g.joueurs[0].layers[0], [(0, 0)]):
+            if g.joueurs[0].hit(g.joueurs[0].layers[0], 0, 0):
+                LogUtil.DEBUG("TEST WIN 1 : OK")
+            else:
+                LogUtil.ERROR("TEST WIN 1 : KO (hit)")
+        else:
+            LogUtil.ERROR("TEST WIN 1 : KO (placement)")

@@ -1,5 +1,7 @@
 from types import FunctionType
 
+from log import LogUtil
+
 
 class Event():
     def __init__(self):
@@ -21,9 +23,13 @@ class Event():
             name (str): event name
             args ([type], optional): args passed to the event. Defaults to None.
         """
-        if self.events[name] != None :
-            self.events[name](args)
-    
+        try:
+            if self.events[name] != None :
+                self.events[name](args)
+        except KeyError:
+            LogUtil.ERROR(f"{name} event not found")
+
+
     def remove(self, name: str):
         """remove an event
 

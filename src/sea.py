@@ -43,7 +43,7 @@ class Sea(Event):
 
         self.submarines = {}
         for i in range(len(submarines)):
-            self.submarines[i + 1] = (submarines[i], False) # {sub_id: (sub_lenght, sinked)}
+            self.submarines[i + 1] = (submarines[i], True) # {sub_id: (sub_lenght, sinked: default True = not placed)}
 
         self.board = {} 
         for layer in layer_depth:
@@ -72,7 +72,8 @@ class Sea(Event):
                 self.emit("sink", (self, case[0]))
 
                 allSinked = True
-                for _, sinked in self.submarines:
+                for id in self.submarines:
+                    _, sinked = self.submarines[id]
                     if sinked == False:
                         allSinked = False
                 

@@ -61,7 +61,6 @@ def choosePlace(window: pygame.Surface,length,player,error):
     return positions
 
 
-
 def retPos():
     wait = True
     while(wait == True):
