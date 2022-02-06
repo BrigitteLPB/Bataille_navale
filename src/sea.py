@@ -59,27 +59,26 @@ class Sea(Event):
         """        
         case = self.board[layer_depth][y][x]
 
-        if case[0] != SeaCaseId.WATER:
-            isSink = True
-            for layer,x,y in self.getSubmarineCases(case[0]):
-                if not self.board[layer][y][x][1]:
-                    isSink = False
+        isSink = True
+        for layer,x,y in self.getSubmarineCases(case[0]):
+            if not self.board[layer][y][x][1]:
+                isSink = False
+        
+        if isSink:
+            self.submarines[case[0]] = (self.submarines[case[0]][0], True)
+
+            LogUtil.INFO(f"submarine sinked at layer:{layer_depth},x:{x},y:{y}")
+            self.emit("sink", (self, case[0]))
+
+            allSinked = True
+            for id in self.submarines:
+                _, sinked = self.submarines[id]
+                if sinked == False:
+                    allSinked = False
             
-            if isSink:
-                self.submarines[case[0]] = (self.submarines[case[0]][0], True)
-
-                LogUtil.INFO(f"submarine sinked at layer:{layer_depth},x:{x},y:{y}")
-                self.emit("sink", (self, case[0]))
-
-                allSinked = True
-                for id in self.submarines:
-                    _, sinked = self.submarines[id]
-                    if sinked == False:
-                        allSinked = False
-                
-                if allSinked:
-                    LogUtil.INFO("all submarines sinked")
-                    self.emit("end", self)
+            if allSinked:
+                LogUtil.INFO("all submarines sinked")
+                self.emit("end", self)
 
 
 
@@ -100,14 +99,15 @@ class Sea(Event):
             if case[1] == False:
                 self.board[layer_depth][y][x] = (case[0], True)
 
-                self.updateSubmarines(layer_depth, x, y)
-
-                # end of app
-                LogUtil.INFO(f"hit on layer:{layer_depth}, x:{x}, y:{y}")
-               
                 self.emit('update', self)
-                self.emit('hit', (self, layer_depth, x, y))
+                
+                if case[0] != SeaCaseId.WATER:
+                    self.updateSubmarines(layer_depth, x, y)
+                    self.emit('hit', (self, layer_depth, x, y))
+                else:
+                    self.emit("miss", (self, layer_depth, x, y))
 
+                LogUtil.INFO(f"hit on layer:{layer_depth}, x:{x}, y:{y}")
                 return True
     
         return False
