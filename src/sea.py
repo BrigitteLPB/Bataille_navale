@@ -18,7 +18,23 @@ class SeaCaseId(int, Enum):
 
 
 class Sea(Event):
+    """Sea class
+    events :
+    - update (sea) : call when an update is made on the board
+    - hit ((sea, layer, x, y)) : call when a case is hit
+    - sink ((sea, submarine_id)) : when a submarine is sinked
+    - end (sea) : all submarines are sinked
+    """    
+
     def __init__(self, height: int, width: int, layer_depth: list[int], submarines: list[int]) -> None:
+        """Sea constructor
+
+        Args:
+            height (int): largeur du plateau
+            width (int): hauteur du plateau
+            layer_depth (list[int]): liste des profondeurs
+            submarines (list[int]): taille des bateaux
+        """       
         super().__init__()
 
         self.width = width
@@ -33,34 +49,78 @@ class Sea(Event):
         for layer in layer_depth:
             self.board[layer] = [[(SeaCaseId.WATER, False) for _ in range(width)] for _ in range(height)]
 
+    def updateSubmarines(self, layer_depth: int, x:int, y:int) -> None :
+        """met à jour les sous-marins du jeu
+
+        Args:
+            layer_depth (int): profondeur
+            x (int): position x [0, self.width-1]
+            y (int): position y [0, self.hieght-1]
+        """        
+        case = self.board[layer_depth][y][x]
+
+        if case[0] != SeaCaseId.WATER:
+            isSink = True
+            for layer,x,y in self.getSubmarineCases(case[0]):
+                if not self.board[layer][y][x][1]:
+                    isSink = False
+            
+            if isSink:
+                self.submarines[case[0]] = (self.submarines[case[0]][0], True)
+
+                LogUtil.INFO(f"submarine sinked at layer:{layer_depth},x:{x},y:{y}")
+                self.emit("sink", (self, case[0]))
+
+                allSinked = True
+                for _, sinked in self.submarines:
+                    if sinked == False:
+                        allSinked = False
+                
+                if allSinked:
+                    LogUtil.INFO("all submarines sinked")
+                    self.emit("end", self)
+
+
 
     def hit(self, layer_depth: int, x: int, y: int) -> bool:
+        """touche une case
+
+        Args:
+            layer_depth (int): profondeur à toucher
+            x (int): position x [0, self.width-1]
+            y (int): position y [0, self.height-1]
+
+        Returns:
+            bool: si la case a bien été touchée
+        """        
         if x >= 0 and x < self.width and y >= 0 and y < self.height:
             case = self.board[layer_depth][y][x]
 
             if case[1] == False:
                 self.board[layer_depth][y][x] = (case[0], True)
-    
-                # update the submarine
-                if case[0] != SeaCaseId.WATER:
-                    isSink = True
-                    for layer,x,y in self.getSubmarineCases(case[0]):
-                        if not self.board[layer][y][x][1]:
-                            isSink = False
-                    
-                    if isSink:
-                        self.submarines[case[0]] = (self.submarines[case[0]][0], True) 
+
+                self.updateSubmarines(layer_depth, x, y)
 
                 # end of app
                 LogUtil.INFO(f"hit on layer:{layer_depth}, x:{x}, y:{y}")
-
+               
                 self.emit('update', self)
+                self.emit('hit', (self, layer_depth, x, y))
+
                 return True
     
         return False
 
 
-    def getSubmarineCases(self, submarine_id):
+    def getSubmarineCases(self, submarine_id: SeaCaseId):
+        """renvoie les cases d'un sous-marin
+
+        Args:
+            submarine_id (SeaCaseId): le sous-marin à regarder
+
+        Returns:
+            (list[(int,int)]): liste des cases
+        """        
         cases = []
 
         for layer in self.layers:
@@ -73,6 +133,14 @@ class Sea(Event):
 
 
     def isAlign(self, pos: list[tuple[int, int]]):
+        """vérifie sur les cases envoyées sont alignées
+
+        Args:
+            pos (list[tuple[int, int]]): listes des points (x,y)
+
+        Returns:
+            bool: True = les cases sont alignées
+        """        
         vecteurs = []
         # calcul des vecteurs
         if len(pos) >= 2:
@@ -98,6 +166,16 @@ class Sea(Event):
 
 
     def placeSubmarine(self, submarine_id: SeaCaseId, layer: int, pos: list[tuple[int, int]]) -> bool:
+        """place un sous-marin sur la grille
+
+        Args:
+            submarine_id (SeaCaseId): identifiant du sous-marin
+            layer (int): profondeur (à prendre depuis sea.layers)
+            pos (list[tuple[int, int]]): listes des positions où il faut placer
+
+        Returns:
+            bool: [description]
+        """        
         opperation_success = False
 
         # checking out of bounds
@@ -107,7 +185,7 @@ class Sea(Event):
         for x, y in pos:
             if x >= 0 and x < self.width and y >= 0 and y < self.height:
                 if self.board[layer][y][x][0] == SeaCaseId.WATER:
-                    if self.isAlign(case_selected + [(x, y)]):
+                    if self.isAlign(case_selected + [(x, y)]):  # could be refactor
                         case_selected.append((x,y))
 
         # adding cases
