@@ -2,11 +2,17 @@
 # from pygame import KEYDOWN, K_UP, K_DOWN, K_RETURN, QUIT
 
 
+from enum import Enum
 import pygame
 from pygame import mixer, image, draw, display, event, font
 
 from env import EnvUtilServer
 from sdl_init import initVideo
+
+class MenuOption(int, Enum):
+    CLASSIC = 0
+    ONLINE = 1
+    IA_MODE = 2
 
 def menu(window: pygame.Surface):
     continuer = 1
@@ -42,8 +48,8 @@ def menu(window: pygame.Surface):
                     pos_trait = pos_trait + 75
                     refresh = True
                 if e.key == pygame.K_RETURN:
-                    print("test")
+                    return MenuOption.CLASSIC    # TODO renvoyer le choix
 
 if __name__ == "__main__":
     w = initVideo()
-    menu(w)
+    _ = menu(w)

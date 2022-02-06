@@ -3,6 +3,8 @@ from pygame import mouse, draw, display, font, image, event
 from pygame.locals import * 
 
 from env import EnvUtilServer
+from log import LogUtil
+from sdl_init import initVideo
 
 WHITE = (255,255,255)
 RED = (255, 0, 0)
@@ -53,9 +55,10 @@ def choosePlace(window: pygame.Surface,length,player,error):
     
     for _ in range(length):
         result = retPos()
-        _ = draw.rect(window,RED,pygame.Rect(result[2]+2, result[3]+2, 28, 28))
+        _ = draw.rect(window,RED,pygame.Rect(result[3]+2, result[4]+2, 28, 28)) # TODO protect from None : survient quand on est en dehors de la grille
         display.update()
-        positions.append((result[0], result[1]))
+        
+        positions.append((result[0], result[1], result[2]))
     
     # time.sleep(5)
     return positions
@@ -79,7 +82,7 @@ def retPos():
     else:
         tab_no = 3
         x_tab = 900
-    print(tab_no)
+    # print(tab_no)
     y_tab = 300
 
     x_temp = x_tab
@@ -87,10 +90,13 @@ def retPos():
     for i in range(6):
         for j in range(10):
             if(x <= x_temp + 30 and x > x_temp and y <= y_temp + 30 and y > y_temp ):
-                print(str(i) + str(j))
-                return i,j,x_temp,y_temp
+                LogUtil.INFO(f"clic on : tab_no : {tab_no}, x: {i}, y: {j}") # DEBUG
+                return tab_no, j, i, x_temp,y_temp
             x_temp = x_temp + 30
         x_temp = x_tab
         y_temp = y_temp +30
 
 
+if __name__ == "__main__":
+    w = initVideo()
+    print(choosePlace(w, 3, 0, False))
