@@ -1,0 +1,59 @@
+{
+	"configurations": [
+		{
+			"name": "Python: Current File",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"args": [
+				"PYTHONPATH=${workspaceFolder}/src"
+			],
+			"env": {
+				"ROOT_PATH": "${workspaceFolder}",
+			},
+			"envFile": "${workspaceFolder}/.env",
+			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "client",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/src/client/__init__.py",
+			"console": "integratedTerminal",
+			"args": [
+				"PYTHONPATH=${workspaceFolder}/src"
+			],
+			"env": {
+				"ROOT_PATH": "${workspaceFolder}",
+			},
+			"envFile": "${workspaceFolder}/.env",
+			"preLaunchTask": "${defaultBuildTask}"
+
+		},
+		{
+			"name": "server",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/src/server/__init__.py",
+			"console": "integratedTerminal",
+			"args": [
+				"PYTHONPATH=${workspaceFolder}/src"
+			],
+			"env": {
+				"ROOT_PATH": "${workspaceFolder}",
+			},
+			"envFile": "${workspaceFolder}/.env",
+			"preLaunchTask": "${defaultBuildTask}"
+		}
+	],
+	"compounds": [
+		{
+			"name": "Compound",
+			"configurations": [
+				"server",
+				"client"
+			]
+		}
+	]
+}
