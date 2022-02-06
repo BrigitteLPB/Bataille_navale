@@ -23,7 +23,6 @@ class EnvUtilServer() :
         # _ = load_dotenv(stream=StringIO(f"ROOT_PATH={Path(__file__).parent.resolve()}"))
         # _ = load_dotenv(stream=StringIO(f"ENV_FILE_PATH={(Path(EnvUtilServer.env['SERVER_ROOT_PATH']) / '.env').resolve()}"))
         # _ = load_dotenv(dotenv_path=EnvUtilServer.env['SERVER_ENV_FILE_PATH'], override=True)
-        pass
 
     @staticmethod
     def to_bool(env_value: str):
