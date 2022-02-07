@@ -1,4 +1,5 @@
 from asyncio import constants
+from tkinter import BROWSE
 import pygame, sys,os
 from pygame.locals import * 
 import random
@@ -7,9 +8,10 @@ import time
 WHITE = (255,255,255)
 RED = (255, 0, 0)
 BLUE = (0, 102, 255)
-DARK_BLUE = (0, 0, 255)
+DARK_BLUE = (0, 0, 153)
 ORANGE = (255, 102, 0)
 YELLOW = (255, 255, 0)
+BROWN = (153, 51, 51)
 
 def applyBackground(window):
     game_background = pygame.image.load("Images/game_background.png")
@@ -63,7 +65,7 @@ def choosePlace(window,length,player,error):
     return tuple
 
 # STATE = FALSE IF LOOSE TRUE IF WIN
-def hit(state,window,matr,posX,posY):
+def hit(state,window,matr,matr1,matr2,matr3,posX,posY,player):
     applyBackground(window)
     start = time.time()
     font = pygame.font.Font('menu.ttf', 50)
@@ -86,15 +88,14 @@ def hit(state,window,matr,posX,posY):
         x = 900
     while(int(time.time() - start) < 10):
         if(int((time.time()) - start) % 2 != last_second):
-            window.blit(result, [(pygame.display.get_surface().get_width()/2)-result.get_width()/2,80])
+            printGame(window,matr1,matr2,matr3,player)
+            window.blit(result, [(pygame.display.get_surface().get_width()/2)-result.get_width()/2,600])
             last_second = int((time.time()) - start) % 2
             if(last_second  == 0):
                 if(state == False):
                     pygame.draw.rect(window,YELLOW,pygame.Rect(x + (posX * 30) + 2, y + (posY * 30) + 2, 28, 28))
                 elif(state == True):
                     pygame.draw.rect(window,DARK_BLUE,pygame.Rect(x + (posX * 30) + 2, y + (posY * 30) + 2, 28, 28))
-            else:
-                applyBackground(window)
             pygame.display.update()
             
 
@@ -125,8 +126,9 @@ def printGame(window,matr1,matr2,matr3,player):
                     pygame.draw.rect(window,RED,pygame.Rect(x_temp+2, y+2, 28, 28))
                 elif(matr[line][column] == 2):
                     pygame.draw.rect(window,ORANGE,pygame.Rect(x_temp+2, y+2, 28, 28))
+                elif(matr[line][column] == 3):
+                    pygame.draw.rect(window,BROWN,pygame.Rect(x_temp+2, y+2, 28, 28))
     pygame.display.update()
-    time.sleep(5)
 
 def retPos():
     wait = True
