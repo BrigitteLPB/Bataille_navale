@@ -7,6 +7,7 @@ import time
 WHITE = (255,255,255)
 RED = (255, 0, 0)
 BLUE = (0, 102, 255)
+DARK_BLUE = (0, 0, 255)
 ORANGE = (255, 102, 0)
 YELLOW = (255, 255, 0)
 
@@ -60,6 +61,43 @@ def choosePlace(window,length,player,error):
     print(tuple)
     time.sleep(5)
     return tuple
+
+# STATE = FALSE IF LOOSE TRUE IF WIN
+def hit(state,window,matr,posX,posY):
+    applyBackground(window)
+    start = time.time()
+    font = pygame.font.Font('menu.ttf', 50)
+    if(state == False):
+        result = font.render("Félicitation, beau tir ! ", True, WHITE)
+        pygame.mixer.music.load('Song/explode.wav')
+        pygame.mixer.music.play()
+    else:
+        result = font.render("Missile perdu ! ", True, RED)
+        pygame.mixer.music.load('Song/plouf.wav')
+        pygame.mixer.music.play()
+    last_second = 0
+    x = 0
+    y = 300
+    if(matr == 0):
+        x = 100
+    elif(matr == 1):
+        x = 500
+    else:
+        x = 900
+    while(int(time.time() - start) < 10):
+        if(int((time.time()) - start) % 2 != last_second):
+            window.blit(result, [(pygame.display.get_surface().get_width()/2)-result.get_width()/2,80])
+            last_second = int((time.time()) - start) % 2
+            if(last_second  == 0):
+                if(state == False):
+                    pygame.draw.rect(window,YELLOW,pygame.Rect(x + (posX * 30) + 2, y + (posY * 30) + 2, 28, 28))
+                elif(state == True):
+                    pygame.draw.rect(window,DARK_BLUE,pygame.Rect(x + (posX * 30) + 2, y + (posY * 30) + 2, 28, 28))
+            else:
+                applyBackground(window)
+            pygame.display.update()
+            
+
 
 
 def printGame(window,matr1,matr2,matr3,player):
