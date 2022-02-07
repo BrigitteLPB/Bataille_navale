@@ -6,6 +6,9 @@ import time
 
 WHITE = (255,255,255)
 RED = (255, 0, 0)
+BLUE = (0, 102, 255)
+ORANGE = (255, 102, 0)
+YELLOW = (255, 255, 0)
 
 def applyBackground(window):
     game_background = pygame.image.load("Images/game_background.png")
@@ -54,10 +57,38 @@ def choosePlace(window,length,player,error):
         pygame.display.update()
         minor_tuple = (result[0], result[1])
         tuple =  tuple + (minor_tuple,)
+    print(tuple)
     time.sleep(5)
     return tuple
 
 
+def printGame(window,matr1,matr2,matr3,player):
+    applyBackground(window)
+    x = -330
+    x_temp = 0
+    for tab in range(3):
+        x = x + 400
+        x_temp = x
+        y = 270
+        if(tab == 0):
+            matr = matr1
+        elif(tab == 1):
+            matr = matr2
+        else:
+            matr = matr3
+        for line in range (5):
+            y = y + 30
+            x_temp = x
+            for column in range(10):
+                x_temp = x_temp + 30
+                if(matr[line][column] == 0):
+                    pygame.draw.rect(window,BLUE,pygame.Rect(x_temp+2, y+2, 28, 28))
+                elif(matr[line][column] == 1):
+                    pygame.draw.rect(window,RED,pygame.Rect(x_temp+2, y+2, 28, 28))
+                elif(matr[line][column] == 2):
+                    pygame.draw.rect(window,ORANGE,pygame.Rect(x_temp+2, y+2, 28, 28))
+    pygame.display.update()
+    time.sleep(5)
 
 def retPos():
     wait = True
@@ -82,7 +113,7 @@ def retPos():
 
     x_temp = x_tab
     y_temp = y_tab
-    for i in range(6):
+    for i in range(5):
         for j in range(10):
             if(x <= x_temp + 30 and x > x_temp and y <= y_temp + 30 and y > y_temp ):
                 print(str(i) + str(j))
