@@ -10,7 +10,6 @@ from log import LogUtil
 
 class MenuOption(int, Enum):
     CLASSIC = 0
-    ONLINE = 1
     QUIT = 2
 
 WHITE = (255,255,255)

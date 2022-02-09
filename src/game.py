@@ -63,8 +63,6 @@ class Game():
 
         if choix == MenuOption.CLASSIC:
             self.classicMode()
-        elif choix == MenuOption.IA_MODE:
-            pass
         elif choix == MenuOption.QUIT:
             pygame.quit()
 
