@@ -14,6 +14,7 @@ class Game():
     def __init__(self) -> None:
         self.joueurs = [Sea(SEA["LAYERS"]["HEIGHT"], SEA["LAYERS"]["WIDTH"], SEA["LAYERS"]["DEPTH"], SEA["SUBMARINES"]["SIZES"]) for _ in range(2)]
         self.endapp = False
+        self.in_game = False
 
         # setting up SDL
         try:
@@ -96,10 +97,12 @@ class Game():
 
 
         # jeu
+        self.in_game = True
         error = False
+
         while not self.endapp:
             s = self.joueurs[(self.actualTurn+1)%len(self.joueurs)]
-            self.sdl.updateEvent(s)
+            self.sdl.updateEvent(s, True)
             self.sdl.printTextTir(self.actualTurn, error)
             layer, x, y = self.sdl.pickCase()
             error = False
@@ -119,7 +122,7 @@ class Game():
         self.sdl.miss(sea, sea.layers.index(layer), x, y)
 
     def updateEvent(self, sea: Sea):
-        self.sdl.updateEvent(sea)
+        self.sdl.updateEvent(sea, self.in_game)
 
     def winEvent(self, sea: Sea):
         for j in range(len(self.joueurs)):

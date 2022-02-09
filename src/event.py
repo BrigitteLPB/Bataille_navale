@@ -25,6 +25,7 @@ class Event():
         """
         try:
             if self.events[name] != None :
+                LogUtil.INFO(f"calling event : {name}")
                 self.events[name](args)
         except KeyError:
             LogUtil.ERROR(f"{name} event not found")

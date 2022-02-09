@@ -5,6 +5,6 @@ SEA = {
         'HEIGHT': 5
     },
     'SUBMARINES': {
-        'SIZES': [1, 1, 2, 2, 3]
+        'SIZES': [1, 2, 3]
     }
 }

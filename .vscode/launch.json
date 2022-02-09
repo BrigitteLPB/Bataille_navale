@@ -45,6 +45,21 @@
 			},
 			"envFile": "${workspaceFolder}/.env",
 			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "main",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/src/main.py",
+			"console": "integratedTerminal",
+			"args": [
+				"PYTHONPATH=${workspaceFolder}/src"
+			],
+			"env": {
+				"ROOT_PATH": "${workspaceFolder}",
+			},
+			"envFile": "${workspaceFolder}/.env",
+			"preLaunchTask": "${defaultBuildTask}"
 		}
 	],
 	"compounds": [

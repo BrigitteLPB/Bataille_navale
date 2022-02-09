@@ -49,17 +49,6 @@ class SDL():
 
         while(refresh):
             ft = font.Font((self.asset_path / "Font/menu.ttf").resolve(), 60)
-            # if(color_inc == True):
-            #     color_num = color_num + 1
-            #     if(color_num == 255):
-            #         color_inc = False
-            # else:
-            #     color_num = color_num - 1
-            #     if(color_num == 0):
-            #         color_inc = True
-            
-            # end = ft.render('Fin du jeu', True, (235, color_num, 0))
-            # winner = ft.render('Le joueur '+str(winner)+' est victorieux', True, (235, color_num, 0))
 
             colors =    (128 + int(127 * math.cos((colors_inc * math.pi)/(3*colors_inc_step))), 
                         128 + int(127 * math.cos(((2*math.pi)/3) + (colors_inc * math.pi)/(3*colors_inc_step))), 
@@ -199,10 +188,10 @@ class SDL():
 
         x_temp = x_tab
         y_temp = y_tab
-        for i in range(6):
-            for j in range(10):
+        for i in range(5):  # HARD CODED THAT'S BAD ! 
+            for j in range(10): # HARD CODED THAT'S BAD ! 
                 if(x <= x_temp + 30 and x > x_temp and y <= y_temp + 30 and y > y_temp ):
-                    LogUtil.INFO(f"clic on : tab_no : {tab_no}, x: {i}, y: {j}") # DEBUG
+                    LogUtil.INFO(f"clic on : tab_no : {tab_no}, x: {i}, y: {j}")
                     return tab_no, j, i
                 
                 x_temp = x_temp + 30
@@ -270,7 +259,7 @@ class SDL():
         display.update()
 
     # Events
-    def updateEvent(self, sea:Sea):
+    def updateEvent(self, sea:Sea, hide = False):
         """evénement update de sea
 
         Args:
@@ -289,7 +278,7 @@ class SDL():
                             self.printCase(layer_id, x, y, WHITE, False)
                         else:
                             self.printCase(layer_id, x, y, RED, False)
-                    else:
+                    elif not hide:
                         if(case[0] == SeaCaseId.WATER):
                             self.printCase(layer_id, x, y, BLUE, False)
                         elif(case[0] == SeaCaseId.SUBMARINE_1):
@@ -298,6 +287,8 @@ class SDL():
                             self.printCase(layer_id, x, y, ORANGE, False)
                         elif(case[0] == SeaCaseId.SUBMARINE_3):
                             self.printCase(layer_id, x, y, BROWN, False)
+                    else:
+                        self.printCase(layer_id, x, y, BLUE, False)
         display.update()
 
     def hit(self, sea: Sea, layer, x, y):
