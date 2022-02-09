@@ -2,11 +2,6 @@
 
 from json import loads
 from os import environ
-from io import StringIO
-from pathlib import Path
-from pickle import NONE
-from dotenv import load_dotenv
-
 
 ENV_INIT = False
 
@@ -21,12 +16,7 @@ class EnvUtilServer() :
     def new():
         """load the env variable
         """
-        try:
-            _ = EnvUtilServer.env['ASSETS_FOLDER']
-        except KeyError:
-            _ = load_dotenv(stream=StringIO(f"ROOT_PATH={Path(__file__).parent.resolve()}"))
-            _ = load_dotenv(stream=StringIO(f"ASSETS_FOLDER={(Path(EnvUtilServer.env['ROOT_PATH']) / 'assets').resolve()}"))
-        EnvUtilServer.env = environ
+        env = environ
 
     @staticmethod
     def to_bool(env_value: str):
