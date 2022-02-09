@@ -11,7 +11,7 @@ from log import LogUtil
 class MenuOption(int, Enum):
     CLASSIC = 0
     ONLINE = 1
-    IA_MODE = 2
+    QUIT = 2
 
 WHITE = (255,255,255)
 RED = (255, 0, 0)
@@ -75,7 +75,7 @@ class SDL():
         """        
         continuer = 1
         refresh = True
-        pos_trait = 400
+        pos_trait = 475
         mixer.music.load(self.asset_path / "Song/menu.wav")
         mixer.music.play()
         while continuer:
@@ -86,11 +86,9 @@ class SDL():
                 display.flip()
                 ft = font.Font(self.asset_path / "Font/menu.ttf", 60)
                 classical = ft.render('Classical', True, (255, 255, 255))
-                online = ft.render('Online', True, (255, 255, 255))
-                IA = ft.render('IA Mode', True, (255, 255, 255))
-                _ = self.window.blit(classical, [50,325])
-                _ = self.window.blit(IA, [50,475])
-                _ = self.window.blit(online, [50,400])
+                end = ft.render('End', True, (255, 255, 255))
+                _ = self.window.blit(classical, [50,400])
+                _ = self.window.blit(end, [50,475])
                 _ = draw.line(self.window,(255, 0, 0),(50, pos_trait), (300, pos_trait), 4)
                 display.update()
                 refresh = False
@@ -99,14 +97,17 @@ class SDL():
                 if e.type == pygame.QUIT:     #Si un de ces événements est de type QUIT
                     continuer = 0      #On arrête la boucle
                 if e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_UP and pos_trait>400:
+                    if e.key == pygame.K_UP and pos_trait>=550:
                         pos_trait = pos_trait - 75
                         refresh = True
                     if e.key == pygame.K_DOWN and pos_trait<=475:
                         pos_trait = pos_trait + 75
                         refresh = True
                     if e.key == pygame.K_RETURN:
-                        return MenuOption.CLASSIC    # TODO renvoyer le choix
+                        if pos_trait == 475:
+                            return MenuOption.CLASSIC
+                        else:
+                            return MenuOption.QUIT
 
     def applyBackground(self):
         """affiche le fond d'écran du jeu

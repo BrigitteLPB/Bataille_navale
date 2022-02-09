@@ -1,5 +1,7 @@
 from enum import Enum
 from pathlib import Path
+
+import pygame
 from constants import SEA
 from env import EnvUtilServer
 from log import LogUtil
@@ -63,8 +65,8 @@ class Game():
             self.classicMode()
         elif choix == MenuOption.IA_MODE:
             pass
-        elif choix == MenuOption.ONLINE:
-            pass
+        elif choix == MenuOption.QUIT:
+            pygame.quit()
 
     def classicMode(self):
         # placement
