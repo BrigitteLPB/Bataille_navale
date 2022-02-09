@@ -16,7 +16,7 @@ class EnvUtilServer() :
     def new():
         """load the env variable
         """
-        env = environ
+        EnvUtilServer.env = environ
 
     @staticmethod
     def to_bool(env_value: str):
