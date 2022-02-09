@@ -19,8 +19,7 @@ class Game():
         try:
             assets_path = EnvUtilServer.env['ASSETS_FOLDER']
         except KeyError:
-            EnvUtilServer.new()
-            assets_path = EnvUtilServer.env['ASSETS_FOLDER']
+            assets_path = Path(EnvUtilServer.env['ROOT_PATH']) / 'assets'
 
         self.sdl = SDL("Batialle Navale", Path(assets_path))
 
