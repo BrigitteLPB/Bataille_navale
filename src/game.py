@@ -125,11 +125,9 @@ class Game():
         self.sdl.updateEvent(sea, self.in_game)
 
     def winEvent(self, sea: Sea):
-        for j in range(len(self.joueurs)):
-            if self.joueurs[j] == sea:
-                self.sdl.endScreen(j)
-                self.endapp = True
-                return  # endpoint here
+        self.sdl.endScreen(self.actualTurn)
+        self.endapp = True
+        return  # endpoint here
 
 
 if __name__ == "__main__":
