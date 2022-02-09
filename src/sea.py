@@ -1,6 +1,4 @@
 from math import sqrt
-
-from sqlalchemy import false
 from event import Event
 from enum import Enum
 
