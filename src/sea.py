@@ -1,4 +1,6 @@
 from math import sqrt
+
+from sqlalchemy import false
 from event import Event
 from enum import Enum
 
@@ -120,7 +122,7 @@ class Sea(Event):
             submarine_id (SeaCaseId): le sous-marin à regarder
 
         Returns:
-            (list[(int,int)]): liste des cases
+            (list[(int,int,int)]): liste des cases
         """        
         cases = []
 
@@ -193,6 +195,7 @@ class Sea(Event):
         if len(case_selected) == self.submarines[submarine_id][0]:
             for case in case_selected:
                 self.board[layer][case[1]][case[0]] = (submarine_id, False)  # converting submarine_id to SeaCaseId
+                self.submarines[submarine_id] = (submarine_id, False)
         
             try:
                 self.emit('update', self)

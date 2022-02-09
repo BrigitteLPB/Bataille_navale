@@ -1,11 +1,10 @@
 from enum import Enum
-from constants import SDL, SEA
+from pathlib import Path
+from constants import SEA
+from env import EnvUtilServer
 from log import LogUtil
-from sdl_end import end
-from sdl_game import choosePlace
-from sdl_menu import MenuOption, menu
 from sea import Sea, SeaCaseId
-from sdl_init import initVideo
+from sdl import SDL, MenuOption
 
 class JoueurId(int, Enum):
     JOUEUR_1 = 0
@@ -17,34 +16,39 @@ class Game():
         self.endapp = False
 
         # setting up SDL
-        if SDL:
-            self.windows = initVideo()
+        try:
+            assets_path = EnvUtilServer.env['ASSETS_FOLDER']
+        except KeyError:
+            EnvUtilServer.new()
+            assets_path = EnvUtilServer.env['ASSETS_FOLDER']
 
-            for s in self.joueurs:
-                s.on("update", lambda _ : LogUtil.INFO("update event"))
-                s.on("hit", lambda _ : LogUtil.INFO("hit event"))
-                s.on("end", self.checkWin)
-                s.on("miss", lambda _ : LogUtil.INFO("miss event"))
-                s.on("sink", lambda _ : LogUtil.INFO("sink event"))
-                pass
+        self.sdl = SDL("Batialle Navale", Path(assets_path))
+
+        for s in self.joueurs:
+            s.on("update", self.updateEvent)
+            s.on("hit", self.hitEvent)
+            s.on("end", self.winEvent)
+            s.on("miss", self.missEvent)
+            s.on("sink", lambda _ : LogUtil.INFO("sink event"))
 
         self.actualTurn = JoueurId.JOUEUR_1
 
-    def checkWin(self, sea: Sea):
-        for j in range(len(self.joueurs)):
-            if self.joueurs[j] == sea:
-                end(self.windows, j+1)
-                self.endapp = True
-                return  # endpoint here
+    def cleanPos(self, pos: list): 
+        """extrait le layer d'un tryptique
 
-    def cleanPos(self, pos: list):                       
+        Args:
+            pos (list): liste de tuple (layer, x, y)
+
+        Returns:
+            tuple[int, list[tuple[int, int]]]: (layer, [(x, y)])
+        """                              
         layer = -1
         posXY = []
         
         for l, x, y in pos:
             if layer == -1:
-                layer = l-1
-            elif l-1 != layer:
+                layer = l
+            elif l != layer:
                 return (None, None)
             
             posXY.append((x, y))
@@ -53,26 +57,33 @@ class Game():
 
 
     def run(self):
-        if SDL:
-            choix = menu(self.windows)
+        choix = self.sdl.menuScreen()
 
-            if choix == MenuOption.CLASSIC:
-                self.classicMode()
-            elif choix == MenuOption.IA_MODE:
-                pass
-            elif choix == MenuOption.ONLINE:
-                pass
+        if choix == MenuOption.CLASSIC:
+            self.classicMode()
+        elif choix == MenuOption.IA_MODE:
+            pass
+        elif choix == MenuOption.ONLINE:
+            pass
 
     def classicMode(self):
         # placement
         for j in range(len(self.joueurs)):
+            self.sdl.updateEvent(self.joueurs[j])
+            
             sea = self.joueurs[j]
             for sub_id in sea.submarines:
                 error = True
                 first = True
 
                 while(error):
-                    pos = choosePlace(self.windows, sea.submarines[sub_id][0], j+1, error and not first)
+                    if error and not first:
+                        self.sdl.updateEvent(self.joueurs[j])
+                    self.sdl.printTextPlacement(j, sea.submarines[sub_id][0], error and not first)
+
+                    pos = []
+                    for _ in range(sea.submarines[sub_id][0]):
+                        pos.append(self.sdl.pickCase())
 
                     layer, cleanPos = self.cleanPos(pos)
                     
@@ -81,14 +92,42 @@ class Game():
                             error = False
                     
                     first = False
+
         LogUtil.INFO("submarines for both players placed")
 
 
         # jeu
+        error = False
         while not self.endapp:
-            layer, x, y = (0, 0, 0) # layer, x, y = getHitPosition()
-            if self.joueurs[self.actualTurn].hit(self.joueurs[self.actualTurn].layers[layer], x, y):
+            s = self.joueurs[(self.actualTurn+1)%len(self.joueurs)]
+            self.sdl.updateEvent(s)
+            self.sdl.printTextTir(self.actualTurn, error)
+            layer, x, y = self.sdl.pickCase()
+            error = False
+            
+            if s.hit(s.layers[layer], x, y):
                 self.actualTurn = (self.actualTurn + 1) % len(self.joueurs)
+            else : 
+                error = True
+    
+    # Events
+    def hitEvent(self, args):
+        (sea, layer, x, y) = args
+        self.sdl.hit(sea, sea.layers.index(layer), x, y)
+
+    def missEvent(self, args):
+        (sea, layer, x, y) = args
+        self.sdl.miss(sea, sea.layers.index(layer), x, y)
+
+    def updateEvent(self, sea: Sea):
+        self.sdl.updateEvent(sea)
+
+    def winEvent(self, sea: Sea):
+        for j in range(len(self.joueurs)):
+            if self.joueurs[j] == sea:
+                self.sdl.endScreen(j)
+                self.endapp = True
+                return  # endpoint here
 
 
 if __name__ == "__main__":

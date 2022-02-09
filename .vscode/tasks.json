@@ -7,10 +7,24 @@
 			"label": "move assets",
 			"type": "shell",
 			"command": "${workspaceFolder}/.vscode/move_assets.windows.cmd",
+			"group": "build"
+		},
+		{
+			"label": "move src",
+			"type": "shell",
+			"command": "${workspaceFolder}/.vscode/move_src.windows.cmd",
+			"group": "build"
+		},
+		{
+			"label": "move",
+			"dependsOn":[
+				"move src",
+				"move assets",
+			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			}
-		},
+		}
 	]
 }
